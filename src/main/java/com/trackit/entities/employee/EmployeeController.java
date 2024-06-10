@@ -3,6 +3,7 @@ package com.trackit.entities.employee;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @RestController
 @RequestMapping("/trackit/employees")
@@ -41,9 +44,17 @@ public class EmployeeController {
 
     //Update
     @PutMapping("/update/{id}/")
-    public Employee employeeUpdate(@RequestBody Employee entity)
-    {
-        return employeeService.employeeSave(entity);
+    public ResponseEntity<Employee> employeeUpdate(@PathVariable Long id, @RequestBody Employee updatedEmployee) {
+        Employee existingEmployee = employeeService.employeeFindById(id);
+        if (existingEmployee != null) {
+            existingEmployee.setNombreEmpleado(updatedEmployee.getNombreEmpleado());
+            existingEmployee.setApellidoEmpleado(updatedEmployee.getApellidoEmpleado());
+            // Actualizar otros campos según sea necesario
+
+            return ResponseEntity.ok(employeeService.employeeSave(existingEmployee));
+        } else {
+            throw new EntityNotFoundException("Employee with id " + id + " not found");
+        }
     }
 
     //DeleteMapping

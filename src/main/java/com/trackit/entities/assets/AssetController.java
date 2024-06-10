@@ -46,9 +46,19 @@ public class AssetController {
 
     //Update
     @PutMapping("/update/{id}/")
-    public Asset assetUpdate(@RequestBody Asset entity)
-    {
-        return assetService.assetSave(entity);
+    public Asset assetUpdate(@PathVariable Long id, @RequestBody Asset updatedAsset) {
+        Asset existingAsset = assetService.assetFindById(id);
+        if (existingAsset != null) {
+            existingAsset.setCodigoActivo(updatedAsset.getCodigoActivo());
+            existingAsset.setNombreActivo(updatedAsset.getNombreActivo());
+            existingAsset.setVidaUtil(updatedAsset.getVidaUtil());
+            existingAsset.setCategory(updatedAsset.getCategory());
+            existingAsset.setEmployee(updatedAsset.getEmployee());
+    
+            return assetService.assetSave(existingAsset);
+        } else {
+            throw new EntityNotFoundException("Asset with id " + id + " not found");
+        }
     }
 
     //Delete
