@@ -40,7 +40,7 @@ public class EmployeeController {
     }
 
     //Update
-    @PutMapping
+    @PutMapping("/update/{id}/")
     public Employee employeeUpdate(@RequestBody Employee entity)
     {
         return employeeService.employeeSave(entity);
